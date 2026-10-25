@@ -1,223 +1,45 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <title>Team Leader Performance Dashboard · 2026</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap');
-        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        :root{
-          --bg:#0a0c10;--bg2:#0d1016;--white:#12151c;--panel2:#171b24;--border:#20242f;--border2:#2a3040;
-          --text:#e8eaef;--text2:#9aa1af;--text3:#6b7280;
-          --accent:#5c7cfa;--accent-l:rgba(92,124,250,.12);
-          --purple:#a78bfa;--purple-l:rgba(167,139,250,.12);
-          --green:#34d399;--green-l:rgba(52,211,153,.12);--green-m:rgba(52,211,153,.2);
-          --red:#f87171;--red-l:rgba(248,113,113,.12);--red-m:rgba(248,113,113,.2);
-          --amber:#fbbf24;--amber-l:rgba(251,191,36,.12);--amber-m:rgba(251,191,36,.2);
-          --teal:#22d3ee;--teal-l:rgba(34,211,238,.12);
-          --shadow:0 1px 2px rgba(0,0,0,.5);
-          --shadow-md:0 10px 28px rgba(0,0,0,.5);
-          --shadow-lg:0 28px 70px rgba(0,0,0,.65);
-          --r:10px;--r-lg:14px;--r-xl:20px;
-          --sbw:250px;
-        }
-        body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
+#!/usr/bin/env python3
+"""
+Generate the `salt` and `hash` values for one dashboard account.
 
-        #login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; justify-content: center; align-items: center; z-index: 99999; }
-        .login-box { background: var(--white); padding: 40px; border-radius: var(--r-xl); box-shadow: var(--shadow-lg); border: 1px solid var(--border); text-align: center; width: 380px; }
-        .login-box h3 { margin-bottom: 20px; font-family: 'Space Grotesk', sans-serif; font-size: 20px; color: var(--text); }
-        .login-box input { width: 100%; padding: 12px 16px; margin-bottom: 15px; border-radius: 9px; border: 1px solid var(--border); background: var(--panel2); color: var(--text); text-align: right; outline: none; font-family: inherit; }
-        .login-box input:focus { border-color: var(--accent); }
-        .login-box button { width: 100%; padding: 12px; background: var(--accent); color: #fff; border: none; border-radius: 9px; cursor: pointer; font-weight: 700; font-family: inherit; transition: background .15s; }
-        .login-box button:hover { background: #4468e6; }
-        #error-msg { color: var(--red); margin-top: 10px; font-size: 12px; display: none; }
-        
-        #app-wrapper { display: none; }
+Usage:
+    python make_password_hash.py admin
+    python make_password_hash.py ahmed.magdy
+    python make_password_hash.py diaa.elsayed
+    python make_password_hash.py yasmine.maher
 
-        .shell{display:flex;min-height:100vh}
-        .sidebar{width:var(--sbw);flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;z-index:150}
-        .side-brand{display:flex;align-items:center;gap:11px;padding:20px 18px 16px;flex-shrink:0}
-        .side-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--purple));display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0}
-        .side-title{font-family:'Space Grotesk',sans-serif;font-weight:800;font-size:14px;color:var(--text)}
-        .side-sub{font-size:10px;color:var(--text3);margin-top:1px}
-        .side-scroll{flex:1;padding:6px 12px 16px}
-        .side-section-label{font-size:9.5px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:.09em;padding:14px 10px 6px}
-        .side-nav{display:flex;flex-direction:column;gap:2px}
-        .nav-tab{display:flex;align-items:center;gap:11px;padding:8px 10px;border-radius:9px;font-size:12.5px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .13s;border-left:2px solid transparent}
-        .nav-tab:hover{color:var(--text);background:var(--panel2)}
-        .nav-tab.active{color:#fff;background:linear-gradient(90deg,rgba(92,124,250,.16),rgba(92,124,250,.03));border-left:2px solid var(--accent);font-weight:600}
-        .content-wrap{flex:1;min-width:0;display:flex;flex-direction:column}
-        .topbar{background:rgba(13,16,22,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);height:60px;padding:0 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
-        .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
-        .main{padding:22px 28px 40px;max-width:1480px;margin:0 auto;width:100%}
-        .btn{padding:7px 14px;border-radius:9px;border:1px solid var(--border);background:var(--panel2);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
-        .btn:hover{background:var(--white);color:var(--text)}
-        .btn.red{background:var(--red-l);color:var(--red);border-color:var(--red)}
+Then open the dashboard HTML, find the matching account inside the `ACCOUNTS`
+array (search for  "id": "<account>"  near the top of the file) and replace its
+`salt` and `hash` values with the printed ones.
 
-        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
-        .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
-        .kpi-title{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:8px}
-        .kpi-val{font-size:24px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--text)}
+The digest scheme must match the browser code exactly:
+    hash = SHA-256( salt + "|" + account_id + "|" + password )   (hex)
+"""
+import getpass
+import hashlib
+import secrets
+import sys
 
-        .card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)}
-        .card-title{font-size:15px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:16px;color:var(--text)}
-        
-        table{width:100%;border-collapse:collapse;text-align:right;font-size:13px}
-        th,td{padding:12px 14px;border-bottom:1px solid var(--border)}
-        th{color:var(--text2);font-weight:600;background:var(--panel2)}
-        tr:hover td{background:var(--panel2)}
-    </style>
-</head>
-<body>
+VALID = {"admin", "ahmed.magdy", "diaa.elsayed", "yasmine.maher"}
 
-    <div id="login-overlay">
-        <div class="login-box">
-            <h3>تسجيل الدخول للنظام</h3>
-            <input type="text" id="login-user" placeholder="اسم المستخدم (admin, ahmed, diaa, yasmine)">
-            <input type="password" id="login-pass" placeholder="كلمة المرور (admin123)">
-            <button onclick="handleLogin()">دخول</button>
-            <p id="error-msg">اسم المستخدم أو كلمة المرور غير صحيحة!</p>
-        </div>
-    </div>
 
-    <div id="app-wrapper">
-        <div class="shell" id="shell">
-          <aside class="sidebar" id="sidebar">
-            <div class="side-brand">
-              <div class="side-icon">Q</div>
-              <div>
-                <div class="side-title">QA Performance</div>
-                <div class="side-sub">Dashboard · 2026</div>
-              </div>
-            </div>
-            <div class="side-scroll">
-              <div class="side-section-label">القائمة الرئيسية</div>
-              <nav class="side-nav">
-                <div class="nav-tab active"><span>📊</span><span>الرئيسية (Overview)</span></div>
-              </nav>
-            </div>
-            <div style="padding: 15px; border-top: 1px solid var(--border);">
-                <button class="btn red" style="width:100%; justify-content:center;" onclick="logout()">تسجيل الخروج</button>
-            </div>
-          </aside>
+def main() -> int:
+    if len(sys.argv) != 2 or sys.argv[1] not in VALID:
+        print(__doc__)
+        return 1
+    account = sys.argv[1]
+    pw = getpass.getpass(f"New password for '{account}': ")
+    if len(pw) < 10:
+        print("Please use at least 10 characters.")
+        return 1
+    if pw != getpass.getpass("Repeat password: "):
+        print("Passwords do not match.")
+        return 1
+    salt = secrets.token_hex(16)
+    digest = hashlib.sha256(f"{salt}|{account}|{pw}".encode("utf-8")).hexdigest()
+    print(f'\nAccount: {account}\n"salt": "{salt}",\n"hash": "{digest}"')
+    return 0
 
-          <div class="content-wrap">
-            <header class="topbar">
-              <div class="topbar-title" id="pageTitle">لوحة الأداء الرئيسية</div>
-              <div style="margin-left:auto; display:flex; align-items:center; gap:10px;">
-                <span id="user-badge" style="font-size: 12px; background: var(--accent-l); color: var(--accent); padding: 4px 10px; border-radius: 20px; font-weight: 700;"></span>
-              </div>
-            </header>
 
-            <main class="main">
-              <div class="kpi-grid">
-                <div class="kpi-card">
-                  <div class="kpi-title">إجمالي التقييمات</div>
-                  <div class="kpi-val" id="val-total">1,240</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">متوسط الأداء العام</div>
-                  <div class="kpi-val" style="color: var(--green);" id="val-avg">94.8%</div>
-                </div>
-                <div class="kpi-card">
-                  <div class="kpi-title">عدد الفرق النشطة</div>
-                  <div class="kpi-val" style="color: var(--purple);" id="val-teams">3 فرق</div>
-                </div>
-              </div>
-
-              <div class="card">
-                <div class="card-title">تقييم أداء الفرق وقادة الفرق</div>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>اسم الفريق / قائد الفريق</th>
-                      <th>عدد المهام المراجعة</th>
-                      <th>معدل الدقة</th>
-                      <th>الحالة</th>
-                    </tr>
-                  </thead>
-                  <tbody id="table-body">
-                    <tr>
-                      <td>Ahmed Magdy</td>
-                      <td>420</td>
-                      <td>96.2%</td>
-                      <td><span style="color: var(--green); font-weight: 700;">ممتاز</span></td>
-                    </tr>
-                    <tr>
-                      <td>Diaa El-Sayed</td>
-                      <td>390</td>
-                      <td>94.1%</td>
-                      <td><span style="color: var(--teal); font-weight: 700;">جيد جداً</span></td>
-                    </tr>
-                    <tr>
-                      <td>Yasmine Maher</td>
-                      <td>430</td>
-                      <td>95.0%</td>
-                      <td><span style="color: var(--green); font-weight: 700;">ممتاز</span></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </main>
-          </div>
-        </div>
-    </div>
-
-    <script>
-        const users = {
-            "admin": { pass: "admin123", role: "مدير النظام (Admin)", team: "All" },
-            "ahmed": { pass: "ahmed123", role: "قائد فريق (Team Leader)", team: "Ahmed Magdy" },
-            "diaa": { pass: "diaa123", role: "قائد فريق (Team Leader)", team: "Diaa El-Sayed" },
-            "yasmine": { pass: "yasmine123", role: "قائد فريق (Team Leader)", team: "Yasmine Maher" }
-        };
-
-        function handleLogin() {
-            const u = document.getElementById("login-user").value.trim().toLowerCase();
-            const p = document.getElementById("login-pass").value.trim();
-
-            if (users[u] && users[u].pass === p) {
-                sessionStorage.setItem("currentUser", u);
-                initApp(u);
-            } else {
-                document.getElementById("error-msg").style.display = "block";
-            }
-        }
-
-        function initApp(username) {
-            const user = users[username];
-            document.getElementById("login-overlay").style.display = "none";
-            document.getElementById("app-wrapper").style.display = "block";
-
-            document.getElementById("user-badge").innerText = `${user.role} (${username})`;
-            
-            // فلترة الجدول بناءً على صلاحية المستخدم
-            const tbody = document.getElementById("table-body");
-            if (user.role.includes("Team Leader")) {
-                let rows = tbody.getElementsByTagName("tr");
-                for (let row of rows) {
-                    if (!row.innerText.includes(user.team)) {
-                        row.style.display = "none";
-                    }
-                }
-            }
-        }
-
-        function logout() {
-            sessionStorage.removeItem("currentUser");
-            location.reload();
-        }
-
-        window.onload = function() {
-            const saved = sessionStorage.getItem("currentUser");
-            if (saved && users[saved]) {
-                initApp(saved);
-            }
-        }
-
-        document.addEventListener("keypress", function(e) {
-            if (e.key === "Enter") handleLogin();
-        });
-    </script>
-</body>
-</html>
+if __name__ == "__main__":
+    raise SystemExit(main())
