@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Team Leader Performance Dashboard · 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700;800&family=Cairo:wght@400;600;700;800&display=swap');
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -21,7 +20,7 @@
           --shadow-md:0 10px 28px rgba(0,0,0,.5);
           --shadow-lg:0 28px 70px rgba(0,0,0,.65);
           --r:10px;--r-lg:14px;--r-xl:20px;
-          --sbw:250px;--sbw-c:76px;
+          --sbw:250px;
         }
         body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:14px;line-height:1.6}
 
@@ -51,10 +50,23 @@
         .content-wrap{flex:1;min-width:0;display:flex;flex-direction:column}
         .topbar{background:rgba(13,16,22,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);height:60px;padding:0 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
         .topbar-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:15px;color:var(--text)}
-        .main{padding:22px 28px 40px;max-width:1480px;margin:0 auto}
+        .main{padding:22px 28px 40px;max-width:1480px;margin:0 auto;width:100%}
         .btn{padding:7px 14px;border-radius:9px;border:1px solid var(--border);background:var(--panel2);color:var(--text2);cursor:pointer;font-size:12px;font-weight:600;display:flex;align-items:center;gap:6px;transition:all .15s;font-family:inherit}
         .btn:hover{background:var(--white);color:var(--text)}
         .btn.red{background:var(--red-l);color:var(--red);border-color:var(--red)}
+
+        .kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:24px}
+        .kpi-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow)}
+        .kpi-title{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:8px}
+        .kpi-val{font-size:24px;font-weight:800;font-family:'Space Grotesk',sans-serif;color:var(--text)}
+
+        .card{background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);padding:20px;margin-bottom:24px;box-shadow:var(--shadow)}
+        .card-title{font-size:15px;font-weight:700;font-family:'Space Grotesk',sans-serif;margin-bottom:16px;color:var(--text)}
+        
+        table{width:100%;border-collapse:collapse;text-align:right;font-size:13px}
+        th,td{padding:12px 14px;border-bottom:1px solid var(--border)}
+        th{color:var(--text2);font-weight:600;background:var(--panel2)}
+        tr:hover td{background:var(--panel2)}
     </style>
 </head>
 <body>
@@ -99,9 +111,53 @@
             </header>
 
             <main class="main">
-              <div style="background: var(--white); border: 1px solid var(--border); border-radius: var(--r-lg); padding: 30px; text-align: center;">
-                <h2 style="font-family: 'Space Grotesk', sans-serif; margin-bottom: 10px; color: var(--accent);">أهلاً بك في النظام الاحترافي</h2>
-                <p id="welcome-sub" style="color: var(--text2); font-size: 15px;"></p>
+              <div class="kpi-grid">
+                <div class="kpi-card">
+                  <div class="kpi-title">إجمالي التقييمات</div>
+                  <div class="kpi-val" id="val-total">1,240</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-title">متوسط الأداء العام</div>
+                  <div class="kpi-val" style="color: var(--green);" id="val-avg">94.8%</div>
+                </div>
+                <div class="kpi-card">
+                  <div class="kpi-title">عدد الفرق النشطة</div>
+                  <div class="kpi-val" style="color: var(--purple);" id="val-teams">3 فرق</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-title">تقييم أداء الفرق وقادة الفرق</div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>اسم الفريق / قائد الفريق</th>
+                      <th>عدد المهام المراجعة</th>
+                      <th>معدل الدقة</th>
+                      <th>الحالة</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-body">
+                    <tr>
+                      <td>Ahmed Magdy</td>
+                      <td>420</td>
+                      <td>96.2%</td>
+                      <td><span style="color: var(--green); font-weight: 700;">ممتاز</span></td>
+                    </tr>
+                    <tr>
+                      <td>Diaa El-Sayed</td>
+                      <td>390</td>
+                      <td>94.1%</td>
+                      <td><span style="color: var(--teal); font-weight: 700;">جيد جداً</span></td>
+                    </tr>
+                    <tr>
+                      <td>Yasmine Maher</td>
+                      <td>430</td>
+                      <td>95.0%</td>
+                      <td><span style="color: var(--green); font-weight: 700;">ممتاز</span></td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </main>
           </div>
@@ -135,10 +191,15 @@
 
             document.getElementById("user-badge").innerText = `${user.role} (${username})`;
             
-            if (user.role.includes("Admin")) {
-                document.getElementById("welcome-sub").innerText = "لديك الصلاحية الكاملة لمشاهدة جميع الفرق والتحكم في البيانات بالكامل عبر لوحة الأداء.";
-            } else {
-                document.getElementById("welcome-sub").innerText = `مرحباً بك، تعرض لك هذه اللوحة بيانات وأداء فريقك فقط: (${user.team})`;
+            // فلترة الجدول بناءً على صلاحية المستخدم
+            const tbody = document.getElementById("table-body");
+            if (user.role.includes("Team Leader")) {
+                let rows = tbody.getElementsByTagName("tr");
+                for (let row of rows) {
+                    if (!row.innerText.includes(user.team)) {
+                        row.style.display = "none";
+                    }
+                }
             }
         }
 
